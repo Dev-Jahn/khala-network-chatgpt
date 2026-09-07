@@ -1,0 +1,17 @@
+# Public HTTPS MCP + your existing OAuth authorization server.
+# All values here are deployment metadata, not bearer tokens or private keys.
+khala_bin = "/opt/khala-network/bin/khala"
+khala_home = "/var/lib/khala-chatgpt/.khala"
+state_dir = "/var/lib/khala-chatgpt/bridge"
+transport = "http"
+host = "127.0.0.1"
+port = 8765
+resource_url = "https://khala.example.com/mcp"
+issuer = "https://identity.example.com"
+jwks_url = "https://identity.example.com/.well-known/jwks.json"
+algorithms = ["RS256"]
+allowed_subjects = ["replace-with-your-issuer-subject"]
+# Optional browser origins. MCP requests without an Origin header are allowed.
+allowed_origins = []
+# Empty means any valid network address; fill this to restrict sending.
+allowed_recipients = []

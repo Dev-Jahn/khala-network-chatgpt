@@ -1,0 +1,8 @@
+# A private, SINGLE-USER stdio connection, including Secure MCP Tunnel.
+# Never share this no-OAuth profile across users/workspaces.
+khala_bin = "/opt/khala-network/bin/khala"
+khala_home = "/var/lib/khala-chatgpt/.khala"
+state_dir = "/var/lib/khala-chatgpt/bridge"
+transport = "stdio"
+local_principal = "jahn-personal-tunnel"
+allowed_recipients = []

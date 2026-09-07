@@ -1,0 +1,24 @@
+[Unit]
+Description=Khala carrier for the ChatGPT leaf node
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=khala-chatgpt
+Group=khala-chatgpt
+Environment=HOME=/var/lib/khala-chatgpt
+Environment=KHALA_HOME=/var/lib/khala-chatgpt/.khala
+Environment=KHALA_RUNTIME_DIR=/var/lib/khala-chatgpt/runtime
+ExecStart=/opt/khala-network/bin/khala link
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/khala-chatgpt
+
+[Install]
+WantedBy=multi-user.target

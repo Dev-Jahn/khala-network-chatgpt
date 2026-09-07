@@ -1,0 +1,10 @@
+{
+  "repository": "Dev-Jahn/khala-network",
+  "base_commit": "3b1bbbdb87f139b322535742682ffa7635b7642d",
+  "required_commit": "ee7845c4b4e6df156f2d0791b248fce2a90f829c",
+  "pull_request": "https://github.com/Dev-Jahn/khala-network/pull/1",
+  "capabilities": {
+    "send_request_id": 1,
+    "inbox_ack_read": 1
+  }
+}

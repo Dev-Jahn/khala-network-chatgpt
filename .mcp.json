@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "khala": {
+      "command": "khala-chatgpt",
+      "args": [
+        "serve"
+      ],
+      "env": {
+        "KHALA_CHATGPT_CONFIG": "/etc/khala-chatgpt/config.toml"
+      }
+    }
+  }
+}

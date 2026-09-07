@@ -1,0 +1,24 @@
+{
+  "name": "khala-network-chatgpt",
+  "version": "0.1.0",
+  "description": "Send and read Khala network mail from ChatGPT with owned, pull-only mailboxes.",
+  "author": {
+    "name": "Dev-Jahn"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Khala Network",
+    "shortDescription": "Send Khala mail and check your conversation mailbox.",
+    "longDescription": "Connect ChatGPT to an existing Khala network. Mail is fetched on request; no autonomous wake is required.",
+    "developerName": "Dev-Jahn",
+    "category": "Productivity",
+    "capabilities": [
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Connect to my Khala mailbox and check unread messages."
+    ]
+  },
+  "mcpServers": "./.mcp.json",
+  "repository": "https://github.com/Dev-Jahn/khala-network-chatgpt"
+}

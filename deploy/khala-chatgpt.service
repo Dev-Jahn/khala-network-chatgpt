@@ -1,0 +1,23 @@
+[Unit]
+Description=Khala ChatGPT authenticated MCP bridge
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=khala-chatgpt
+Group=khala-chatgpt
+WorkingDirectory=/opt/khala-network-chatgpt
+Environment=HOME=/var/lib/khala-chatgpt
+ExecStart=/opt/khala-network-chatgpt/.venv/bin/khala-chatgpt serve --config /etc/khala-chatgpt/config.toml
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/khala-chatgpt
+
+[Install]
+WantedBy=multi-user.target
