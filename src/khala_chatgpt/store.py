@@ -45,7 +45,9 @@ class Store:
             if not db.execute("SELECT 1 FROM mailboxes WHERE id=? AND owner=?", (mailbox, owner)).fetchone():
                 raise ValueError("Mailbox not found or not owned by this authenticated user")
 
-    def open(self, owner: str, conversation: str, resume: str | None) -> str:
+    def open(self, owner: str, conversation: str, resume: str | None, client_mode: str = "chat") -> str:
+        if client_mode not in {"chat", "work"}:
+            raise ValueError("client_mode must be chat or work")
         if not conversation or len(conversation) > 512:
             raise ValueError("A conversation key of 1..512 characters is required")
         conversation = hashlib.sha256(conversation.encode()).hexdigest()
@@ -60,8 +62,16 @@ class Store:
                                    (owner, conversation)).fetchone()
                 if found:
                     return found[0]
-                mailbox = "cg-" + secrets.token_hex(12)
-                db.execute("INSERT INTO mailboxes VALUES (?, ?, ?)", (mailbox, owner, int(time.time())))
+                # Short, opaque identifiers are display names, never credentials.
+                # Reserve under the same transaction as the conversation binding.
+                for _ in range(128):
+                    mailbox = f"gpt-{client_mode}-{secrets.token_hex(4)}"
+                    inserted = db.execute("INSERT OR IGNORE INTO mailboxes VALUES (?, ?, ?)",
+                                          (mailbox, owner, int(time.time())))
+                    if inserted.rowcount:
+                        break
+                else:
+                    raise RuntimeError("Could not allocate a unique mailbox address; retry opening")
             db.execute("INSERT OR REPLACE INTO bindings VALUES (?, ?, ?)", (owner, conversation, mailbox))
             return mailbox
 

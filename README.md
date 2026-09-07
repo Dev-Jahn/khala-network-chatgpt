@@ -29,9 +29,21 @@ flowchart TD
     L <--> N["Existing servers and Claude sessions"]
 ```
 
-Use a dedicated OS account and a dedicated `KHALA_HOME`. Do not expose an existing Claude user's directory directly to the MCP server. ChatGPT addresses take the form `cg-<random>@chatgpt` and do not impersonate an existing process or Claude registration.
+Use a dedicated OS account and a dedicated `KHALA_HOME`. Do not expose an existing Claude user's directory directly to the MCP server. New addresses take the form `gpt-chat-<8 hex digits>@<node>` or `gpt-work-<8 hex digits>@<node>` and do not impersonate an existing process or Claude registration.
+
+`khala_session_open` accepts `client_mode="chat"` (default) or `client_mode="work"`. The caller supplies its known surface; the server does not infer Chat/Work from a user-agent string. When the surface is unknown, the default is Chat. The suffix is a random eight-digit hexadecimal identifier, with collision detection and retries inside the allocation transaction. It is not an authentication secret.
+
+The prefix records the surface at creation, not a live presence signal. Reopening a conversation, switching its mode, restarting the bridge, or explicitly resuming a mailbox preserves its address. Existing `cg-...` addresses, mail, read receipts and retry records remain valid and are not renamed. The new format applies to newly created mailboxes after updating and restarting the bridge; refresh the connection's tool schema so callers can pass `client_mode`.
 
 HTTP mode identifies users by their verified OAuth `issuer + sub`. The `openai/session` value distinguishes conversations only and does not confer authorization. Hosts without this metadata use an explicit `conversation_key`.
+
+### Hosting the chatgpt node on an existing hub machine
+
+The physical host and Khala node name are independent. A Mac mini can host both the existing `mini` hub and a separate `chatgpt` node. Give the new node its own `KHALA_HOME`, config with `self chatgpt`, bridge `state_dir`, and carrier process connected to the existing hub. New addresses will then be `gpt-chat-<8 hex digits>@chatgpt` or `gpt-work-<8 hex digits>@chatgpt`. Keep the existing hub's identity and carrier unchanged; never run two carriers against the same home.
+
+The bridge derives the address suffix from the configured Khala node. Do not rewrite only the displayed suffix: envelopes, routing and recipient checks must agree. Node separation is logical; OS isolation additionally requires separate service accounts and appropriate filesystem permissions.
+
+For a deployment that already created `cg-...@mini` mailboxes, initialize the new node with a fresh bridge state directory. Preserve the old database, mail and retry records. Changing `khala_home` while reusing the old database is not a mailbox migration. Old addresses stay on `mini` and are not automatically forwarded or exposed through the new node's bridge. Open a new mailbox after switching the connection; continue accessing old mail through the old deployment if needed. A transfer of old mail or address forwarding requires a separate migration procedure.
 
 ## Prerequisites
 

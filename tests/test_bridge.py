@@ -1,6 +1,7 @@
 import concurrent.futures
 from dataclasses import replace
 import os
+import re
 import sys
 
 import pytest
@@ -150,9 +151,11 @@ local_principal = "test-owner"
                 await session.initialize()
                 tools = await session.list_tools()
                 assert len(tools.tools) == 7
-                opened = await session.call_tool("khala_session_open", {"conversation_key": "stdio-chat"})
+                opened = await session.call_tool("khala_session_open", {
+                    "conversation_key": "stdio-chat", "client_mode": "work"})
                 assert not opened.isError
                 mailbox = opened.structuredContent["mailbox_id"]
+                assert re.fullmatch(r"gpt-work-[0-9a-f]{8}", mailbox)
                 bridge.store.prepare_send(mailbox, "pending", "test-fingerprint")
                 for request, expected in (("missing", "unknown_request"),
                                           ("pending", "pending_or_response_lost")):

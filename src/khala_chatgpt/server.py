@@ -1,4 +1,5 @@
 import asyncio
+from typing import Literal
 from urllib.parse import urlsplit
 
 from mcp.server.auth.middleware.auth_context import get_access_token
@@ -72,11 +73,16 @@ def create_server(settings: Settings) -> FastMCP:
 
     @mcp.tool(annotations=annotations(False), structured_output=True, meta=security("khala:connect"))
     async def khala_session_open(ctx: Context, conversation_key: str | None = None,
-                                 resume_mailbox: str | None = None) -> SessionResult:
+                                 resume_mailbox: str | None = None,
+                                 client_mode: Literal["chat", "work"] = "chat") -> SessionResult:
         """Open a stable mailbox for this conversation, or resume an owned mailbox.
 
         conversation_key is a non-secret label required only if the host does not
         supply openai/session metadata. resume_mailbox must come from the user.
+        Set client_mode to work when running in ChatGPT Work, or chat in Chat.
+        If the surface is unknown, keep the chat default. This naming hint is
+        used only when creating a mailbox: gpt-{client_mode}-{8 hex digits}.
+        Existing bindings and explicitly resumed addresses are never renamed.
         """
         owner = identity("khala:connect")
         meta = ctx.request_context.meta
@@ -84,7 +90,7 @@ def create_server(settings: Settings) -> FastMCP:
         conversation = host_session if isinstance(host_session, str) and host_session else conversation_key
         if not conversation:
             raise ValueError("Host session metadata is unavailable; supply a stable conversation_key label")
-        return await asyncio.to_thread(bridge.session_open, owner, conversation, resume_mailbox)
+        return await asyncio.to_thread(bridge.session_open, owner, conversation, resume_mailbox, client_mode)
 
     @mcp.tool(annotations=annotations(True), structured_output=True, meta=security("khala:fleet"))
     async def khala_fleet_list() -> FleetResult:

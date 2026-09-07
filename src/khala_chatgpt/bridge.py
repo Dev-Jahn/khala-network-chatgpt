@@ -51,8 +51,9 @@ class Bridge:
             raise RuntimeError("Khala command failed; check the dedicated node locally")
         return result.stdout.strip()
 
-    def session_open(self, owner: str, conversation: str, resume: str | None = None) -> dict:
-        mailbox = self.store.open(owner, conversation, resume)
+    def session_open(self, owner: str, conversation: str, resume: str | None = None,
+                     client_mode: str = "chat") -> dict:
+        mailbox = self.store.open(owner, conversation, resume, client_mode)
         return {"mailbox_id": mailbox, "address": f"{mailbox}@{self.node}",
                 "receive_mode": "manual_pull", "wake": False}
 
