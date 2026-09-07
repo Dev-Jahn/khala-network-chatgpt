@@ -1,5 +1,5 @@
 """Explicit MCP structured output schemas."""
-from typing_extensions import TypedDict
+from typing_extensions import NotRequired, TypedDict
 
 
 class SessionResult(TypedDict):
@@ -56,11 +56,11 @@ SendResult = TypedDict("SendResult", {"id": str, "request_id": str, "from": str,
                                     "status": str, "meaning": str})
 
 
-class StatusResult(TypedDict, total=False):
-    id: str
+class StatusResult(TypedDict):
+    id: NotRequired[str | None]
     status: str
-    retry_same_request_id: bool
-    meaning: str
+    retry_same_request_id: NotRequired[bool | None]
+    meaning: NotRequired[str | None]
 
 
 class Presence(TypedDict):

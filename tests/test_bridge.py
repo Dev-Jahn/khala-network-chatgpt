@@ -153,11 +153,22 @@ local_principal = "test-owner"
                 opened = await session.call_tool("khala_session_open", {"conversation_key": "stdio-chat"})
                 assert not opened.isError
                 mailbox = opened.structuredContent["mailbox_id"]
+                bridge.store.prepare_send(mailbox, "pending", "test-fingerprint")
+                for request, expected in (("missing", "unknown_request"),
+                                          ("pending", "pending_or_response_lost")):
+                    status = await session.call_tool("khala_message_status", {
+                        "mailbox_id": mailbox, "request_id": request})
+                    assert not status.isError
+                    assert status.structuredContent["status"] == expected
                 sent = await session.call_tool("khala_message_send", {
                     "mailbox_id": mailbox, "to": f"{mailbox}@chatgpt", "subject": "MCP test",
                     "body": "round trip", "request_id": "stdio-1"})
                 assert not sent.isError
                 bridge.run("reconcile")
+                status = await session.call_tool("khala_message_status", {
+                    "mailbox_id": mailbox, "request_id": "stdio-1"})
+                assert not status.isError
+                assert status.structuredContent["status"] == "delivered"
                 read_result = await session.call_tool("khala_message_read", {
                     "mailbox_id": mailbox, "message_id": sent.structuredContent["id"]})
                 assert read_result.structuredContent["body"] == "round trip"
