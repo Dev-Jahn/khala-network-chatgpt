@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: Dev-Jahn/khala-network
-          ref: ee7845c4b4e6df156f2d0791b248fce2a90f829c
+          ref: dd9409aa7bf652068e0eb5981dfae2e7fb13dcbe
           path: .test-upstream
           persist-credentials: false
       - uses: actions/setup-python@v5

@@ -25,7 +25,9 @@ def test_conversation_ownership_and_resume(bridge):
 
 def test_full_page_chain_and_explicit_read_ack(bridge):
     mailbox = bridge.session_open("owner", "chat")["mailbox_id"]
-    message_id = deliver(bridge, mailbox, "한글🙂" * 12000)
+    # Two three-byte symbols and a four-byte emoji exercise UTF-8 page boundaries.
+    unicode_body = "\u20ac\u2603\U0001f642" * 12000
+    message_id = deliver(bridge, mailbox, unicode_body)
     second = deliver(bridge, mailbox, "keep unread")
     assert len(bridge.inbox_list("owner", mailbox)["messages"]) == 2
     first = bridge.message_read("owner", mailbox, message_id)
@@ -37,7 +39,7 @@ def test_full_page_chain_and_explicit_read_ack(bridge):
     while page["next_cursor"]:
         page = bridge.message_read("owner", mailbox, message_id, page["next_cursor"])
         body += page["body"]
-    assert body == "한글🙂" * 12000
+    assert body == unicode_body
     assert (bridge.root / "inbox" / mailbox / "new" / message_id).exists()
     bridge.inbox_ack_read("owner", mailbox, [page["read_receipt"]])
     bridge.inbox_ack_read("owner", mailbox, [page["read_receipt"]])

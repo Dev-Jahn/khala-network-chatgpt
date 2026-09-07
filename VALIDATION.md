@@ -5,7 +5,7 @@ examples and automated tests for pull-only Khala mailboxes.
 
 Upstream compatibility is published as
 [khala-network PR #1](https://github.com/Dev-Jahn/khala-network/pull/1), commit
-`ee7845c4b4e6df156f2d0791b248fce2a90f829c`, based on main
+`dd9409aa7bf652068e0eb5981dfae2e7fb13dcbe`, based on main
 `3b1bbbdb87f139b322535742682ffa7635b7642d`. Main was not updated or merged.
 
 Local validation completed:
@@ -14,8 +14,9 @@ Local validation completed:
   tools, signed JWT validation, scope/owner isolation, message pagination,
   receipt binding, concurrent idempotent sends, persistent mappings, package
   contents and credential-bearing URL rejection.
-- 9 native compatibility tests, including simulated process interruption
-  boundaries and concurrent retries.
+- 11 native compatibility tests, including simulated process interruption
+  boundaries, concurrent retries, legacy input migration, and a 31-day archive
+  retention pass that preserves retry idempotency.
 - 9 existing Khala local-roundtrip checks covering normal send, ACK, dedup,
   drain, expiry and presence.
 - Plugin and bundled skill schema validation; Bash syntax and diff whitespace.
